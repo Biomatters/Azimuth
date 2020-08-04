@@ -12,7 +12,6 @@ import pandas
 import azimuth.local_multiprocessing
 import azimuth.load_data
 import azimuth.features.featurization as feat
-import sklearn.ensemble.gradient_boosting
 
 
 def check_feature_set_dims(feature_sets):
