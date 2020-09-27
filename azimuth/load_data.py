@@ -2,7 +2,7 @@ import pandas
 import pkg_resources
 
 from . import util
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import scipy as sp
 import scipy.stats
 import numpy as np
@@ -324,18 +324,18 @@ def read_V2_data(data_file, learn_options=None, verbose=True):
     yall = pandas.concat((y_rank, y_threshold, y_quant), axis=1)
     Y = pandas.merge(Y, yall, how='inner', left_index=True, right_index=True)
 
-    PLOT = False
-    if PLOT:
-        # to better understand, try plotting something like:
-        labels = ["score", "score_drug_gene_rank", "score_drug_rank", "score_drug_gene_threshold", "score_drug_threshold"]
-
-        for label in labels:
-            plt.figure()
-            plt.plot(Xdf['sgRNA Score'].values, Y[label].values, '.')
-            r, pearp = sp.stats.pearsonr(Xdf['sgRNA Score'].values.flatten(), Y[label].values.flatten())
-            plt.title(label + ' VS pred. score, $r$=%0.2f (p=%0.2e)' % (r, pearp))
-            plt.xlabel("sgRNA prediction score")
-            plt.ylabel(label)
+    # PLOT = False
+    # if PLOT:
+    #     # to better understand, try plotting something like:
+    #     labels = ["score", "score_drug_gene_rank", "score_drug_rank", "score_drug_gene_threshold", "score_drug_threshold"]
+    #
+    #     for label in labels:
+    #         plt.figure()
+    #         plt.plot(Xdf['sgRNA Score'].values, Y[label].values, '.')
+    #         r, pearp = sp.stats.pearsonr(Xdf['sgRNA Score'].values.flatten(), Y[label].values.flatten())
+    #         plt.title(label + ' VS pred. score, $r$=%0.2f (p=%0.2e)' % (r, pearp))
+    #         plt.xlabel("sgRNA prediction score")
+    #         plt.ylabel(label)
 
     gene_position = util.impute_gene_position(gene_position)
 

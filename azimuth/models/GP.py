@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 
 def gp_on_fold(feature_sets, train, test, y, y_all, inputs, dim, dimsum, learn_options):
@@ -84,26 +84,27 @@ def gp_on_fold(feature_sets, train, test, y, y_all, inputs, dim, dimsum, learn_o
 
 
     if False: # debug plots
-        m.optimize_restarts(3, messages=1)
-        y_pred, y_uncert = m.predict(X[test])
-
-        plt.figure('residuals')
-        plt.title('residuals')
-        plt.hist(y_pred.flatten()-y[test].flatten(), bins=50)
-
-        plt.figure('predictions')
-        plt.title('predictions')
-        plt.errorbar(y_pred.flatten(), y[test].flatten(), yerr=np.sqrt(y_uncert.flatten()), fmt='o')
-        plt.xlabel('prediction')
-        plt.ylabel('truth')
-
-        plt.figure('kernel')
-        plt.title('kernel')
-        plt.imshow(m.kern.K(X,X))
-        print(m)
-        print("%.3f variance explained" % (m.Gaussian_noise.variance/y[train].var()))
-        import ipdb; ipdb.set_trace()
-        plt.close('all')
+        pass
+        # m.optimize_restarts(3, messages=1)
+        # y_pred, y_uncert = m.predict(X[test])
+        #
+        # plt.figure('residuals')
+        # plt.title('residuals')
+        # plt.hist(y_pred.flatten()-y[test].flatten(), bins=50)
+        #
+        # plt.figure('predictions')
+        # plt.title('predictions')
+        # plt.errorbar(y_pred.flatten(), y[test].flatten(), yerr=np.sqrt(y_uncert.flatten()), fmt='o')
+        # plt.xlabel('prediction')
+        # plt.ylabel('truth')
+        #
+        # plt.figure('kernel')
+        # plt.title('kernel')
+        # plt.imshow(m.kern.K(X,X))
+        # print(m)
+        # print("%.3f variance explained" % (m.Gaussian_noise.variance/y[train].var()))
+        # import ipdb; ipdb.set_trace()
+        # plt.close('all')
     else:
         m.optimize_restarts(3)
         # m.optimize(messages=1)

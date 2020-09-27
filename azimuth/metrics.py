@@ -490,17 +490,17 @@ def ndcg_at_k_swap_perm_test(preds1, preds2, true_labels, nperm, method, k, norm
             num_stat_greater = np.max((((perm_ndcg_diff > real_ndcg_diff).sum() + 1), 1.0))
             pval = num_stat_greater / nperm
 
-        if False:
-            plt.figure();
-            plt.plot(np.sort(perm_ndcg_diff), '.')
-            plt.plot(real_ndcg_diff*np.ones(perm_ndcg_diff.shape), 'k-')
-            plt.show()
+        # if False:
+        #     plt.figure();
+        #     plt.plot(np.sort(perm_ndcg_diff), '.')
+        #     plt.plot(real_ndcg_diff*np.ones(perm_ndcg_diff.shape), 'k-')
+        #     plt.show()
                         
         return pval, real_ndcg_diff, perm_ndcg_diff, ndcg1, ndcg2
 
 if __name__ == "__main__":
     import pickle as pickle
-    import matplotlib.pyplot as plt
+    # import matplotlib.pyplot as plt
     import elevation.metrics
     from . import corrstats
 
@@ -579,8 +579,8 @@ if __name__ == "__main__":
     for i, theta in enumerate(theta_range.tolist()):
         #mytitle = "Norm. hist p-values nDCG\n %d null samples, w %d perm and N=%d, theta=%s" % (T, nperm, N, str(theta))
         mytitle = "Norm. hist p-values Steiger w weighted Spearman\n %d null samples, N=%d, weight=%s" % (T, N, str(theta))
-        ut.qqplotp(allp[i,:], dohist=True, numbins=10, figsize=[6,6], title=mytitle, markersize=5)
-        plt.show()
+        # ut.qqplotp(allp[i,:], dohist=True, numbins=10, figsize=[6,6], title=mytitle, markersize=5)
+        # plt.show()
     
     #save_tmp_results = r'D:\Source\CRISPR\elevation\pickles\tmp.ndcg.stat.calibration.p'
     #pickle.dump([theta_range, allp, pval, real_ndcg_diff, perm_ndcg_diff, ndcg1, ndcg2], open(save_tmp_results, "wb" ))

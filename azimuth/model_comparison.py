@@ -7,7 +7,7 @@ import numpy as np
 import azimuth.util
 import shutil
 import pickle
-import pylab as plt
+# import pylab as plt
 import pandas
 import azimuth.local_multiprocessing
 import azimuth.load_data

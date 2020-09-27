@@ -1,6 +1,6 @@
 import pandas
-import matplotlib.pylab as plt
-import pylab as pl # so can just grab qqplotting code from fastlmm directly
+# import matplotlib.pylab as plt
+# import pylab as pl # so can just grab qqplotting code from fastlmm directly
 import scipy.stats
 import scipy as sp
 import numpy as np
@@ -26,149 +26,149 @@ import sys
 import pandas as pd
 from . import corrstats
 
-def qqplot(pvals, fileout = None, alphalevel = 0.05,legend=None,xlim=None,ylim=None,fixaxes=True,addlambda=True,minpval=1e-20,title=None,h1=None,figsize=[5,5],grid=True, markersize=2):
-    '''
-    performs a P-value QQ-plot in -log10(P-value) space
-    -----------------------------------------------------------------------
-    Args:
-        pvals       P-values, for multiple methods this should be a list (each element will be flattened)
-        fileout    if specified, the plot will be saved to the file (optional)
-        alphalevel  significance level for the error bars (default 0.05)
-                    if None: no error bars are plotted
-        legend      legend string. For multiple methods this should be a list
-        xlim        X-axis limits for the QQ-plot (unit: -log10)
-        ylim        Y-axis limits for the QQ-plot (unit: -log10)
-        fixaxes    Makes xlim=0, and ylim=max of the two ylimits, so that plot is square
-        addlambda   Compute and add genomic control to the plot, bool
-        title       plot title, string (default: empty)
-        h1          figure handle (default None)
-        figsize     size of the figure. (default: [5,5])
-        grid        boolean: use a grid? (default: True)
-    Returns:   fighandle, qnull, qemp
-    -----------------------------------------------------------------------
-    '''    
-    distr = 'log10'
-    import pylab as pl
-    if type(pvals)==list:
-        pvallist=pvals
-    else:
-        pvallist = [pvals]
-    if type(legend)==list:
-        legendlist=legend
-    else:
-        legendlist = [legend]
-    
-    if h1 is None:
-        h1=pl.figure(figsize=figsize) 
-    
-    pl.grid(b=grid, alpha = 0.5)
-         
-    maxval = 0
+# def qqplot(pvals, fileout = None, alphalevel = 0.05,legend=None,xlim=None,ylim=None,fixaxes=True,addlambda=True,minpval=1e-20,title=None,h1=None,figsize=[5,5],grid=True, markersize=2):
+#     '''
+#     performs a P-value QQ-plot in -log10(P-value) space
+#     -----------------------------------------------------------------------
+#     Args:
+#         pvals       P-values, for multiple methods this should be a list (each element will be flattened)
+#         fileout    if specified, the plot will be saved to the file (optional)
+#         alphalevel  significance level for the error bars (default 0.05)
+#                     if None: no error bars are plotted
+#         legend      legend string. For multiple methods this should be a list
+#         xlim        X-axis limits for the QQ-plot (unit: -log10)
+#         ylim        Y-axis limits for the QQ-plot (unit: -log10)
+#         fixaxes    Makes xlim=0, and ylim=max of the two ylimits, so that plot is square
+#         addlambda   Compute and add genomic control to the plot, bool
+#         title       plot title, string (default: empty)
+#         h1          figure handle (default None)
+#         figsize     size of the figure. (default: [5,5])
+#         grid        boolean: use a grid? (default: True)
+#     Returns:   fighandle, qnull, qemp
+#     -----------------------------------------------------------------------
+#     '''
+#     distr = 'log10'
+#     import pylab as pl
+#     if type(pvals)==list:
+#         pvallist=pvals
+#     else:
+#         pvallist = [pvals]
+#     if type(legend)==list:
+#         legendlist=legend
+#     else:
+#         legendlist = [legend]
+#
+#     if h1 is None:
+#         h1=pl.figure(figsize=figsize)
+#
+#     pl.grid(b=grid, alpha = 0.5)
+#
+#     maxval = 0
+#
+#     for i in range(len(pvallist)):
+#         pval =pvallist[i].flatten()
+#         M = pval.shape[0]
+#         pnull = (0.5 + sp.arange(M))/M
+#         # pnull = np.sort(np.random.uniform(size = tests))
+#
+#         pval[pval<minpval]=minpval
+#         pval[pval>=1]=1
+#
+#         if distr == 'chi2':
+#             qnull = st.chi2.isf(pnull, 1)
+#             qemp = (st.chi2.isf(sp.sort(pval),1))
+#             xl = 'LOD scores'
+#             yl = '$\chi^2$ quantiles'
+#
+#         if distr == 'log10':
+#             qnull = -sp.log10(pnull)
+#             qemp = -sp.log10(sp.sort(pval)) #sorts the object, returns nothing
+#             xl = '-log10(P) observed'
+#             yl = '-log10(P) expected'
+#         if not (sp.isreal(qemp)).all(): raise Exception("imaginary qemp found")
+#         if qnull.max>maxval:
+#             maxval = qnull.max()
+#         pl.plot(qnull, qemp, '.', markersize=markersize)
+#         #pl.plot([0,qemp.max()], [0,qemp.max()],'r')
+#         if addlambda:
+#             lambda_gc = estimate_lambda(pval)
+#             print("lambda=%1.4f" % lambda_gc)
+#             #pl.legend(["gc="+ '%1.3f' % lambda_gc],loc=2)
+#             # if there's only one method, just print the lambda
+#             if len(pvallist) == 1:
+#                 legendlist=["$\lambda_{GC}=$%1.4f" % lambda_gc]
+#             # otherwise add it at the end of the name
+#             else:
+#                 legendlist[i] = legendlist[i] + " ($\lambda_{GC}=$%1.4f)" % lambda_gc
+#
+#     addqqplotinfo(qnull,M,xl,yl,xlim,ylim,alphalevel,legendlist,fixaxes)
+#
+#     if title is not None:
+#         pl.title(title)
+#
+#     if fileout is not None:
+#         pl.savefig(fileout)
+#
+#     return h1,qnull, qemp,
 
-    for i in range(len(pvallist)):        
-        pval =pvallist[i].flatten()
-        M = pval.shape[0]
-        pnull = (0.5 + sp.arange(M))/M
-        # pnull = np.sort(np.random.uniform(size = tests))
-                
-        pval[pval<minpval]=minpval
-        pval[pval>=1]=1
 
-        if distr == 'chi2':
-            qnull = st.chi2.isf(pnull, 1)
-            qemp = (st.chi2.isf(sp.sort(pval),1))
-            xl = 'LOD scores'
-            yl = '$\chi^2$ quantiles'
+# def qqplotp(pv,fileout = None, alphalevel = 0.05,legend=None,xlim=None,ylim=None,ycoord=10,plotsize="652x526",title=None,dohist=True, numbins=50, figsize=[5,5], markersize=2):
+#      '''
+#      Read in p-values from filein and make a qqplot adn histogram.
+#      If fileout is provided, saves the qqplot only at present.
+#      Searches through p until one is found.   '''
+#
+#      import pylab as pl
+#      pl.ion()
+#
+#      fs=8
+#      h1=qqplot(pv, fileout, alphalevel,legend,xlim,ylim,addlambda=True, figsize=figsize, markersize=markersize)
+#      #lambda_gc=estimate_lambda(pv)
+#      #pl.legend(["gc="+ '%1.3f' % lambda_gc],loc=2)
+#      pl.title(title,fontsize=fs)
+#
+#      wm=pl.get_current_fig_manager()
+#      #e.g. "652x526+100+10
+#      xcoord=100
+#      #wm.window.wm_geometry(plotsize + "+" + str(xcoord) + "+" + str(ycoord))
+#
+#      if dohist:
+#          h2=pvalhist(pv, numbins=numbins, figsize=figsize)
+#          pl.title(title,fontsize=fs)
+#          #wm=pl.get_current_fig_manager()
+#          width_height=plotsize.split("x")
+#          buffer=10
+#          xcoord=int(xcoord + float(width_height[0])+buffer)
+#          #wm.window.wm_geometry(plotsize + "+" + str(xcoord) + "+" + str(ycoord))
+#      else: h2=None
+#
+#      return h1,h2
 
-        if distr == 'log10':
-            qnull = -sp.log10(pnull)            
-            qemp = -sp.log10(sp.sort(pval)) #sorts the object, returns nothing
-            xl = '-log10(P) observed'
-            yl = '-log10(P) expected'
-        if not (sp.isreal(qemp)).all(): raise Exception("imaginary qemp found")
-        if qnull.max>maxval:
-            maxval = qnull.max()                
-        pl.plot(qnull, qemp, '.', markersize=markersize)
-        #pl.plot([0,qemp.max()], [0,qemp.max()],'r')        
-        if addlambda:
-            lambda_gc = estimate_lambda(pval)
-            print("lambda=%1.4f" % lambda_gc)
-            #pl.legend(["gc="+ '%1.3f' % lambda_gc],loc=2)   
-            # if there's only one method, just print the lambda
-            if len(pvallist) == 1:
-                legendlist=["$\lambda_{GC}=$%1.4f" % lambda_gc]   
-            # otherwise add it at the end of the name
-            else:
-                legendlist[i] = legendlist[i] + " ($\lambda_{GC}=$%1.4f)" % lambda_gc
-
-    addqqplotinfo(qnull,M,xl,yl,xlim,ylim,alphalevel,legendlist,fixaxes)  
-    
-    if title is not None:
-        pl.title(title)            
-    
-    if fileout is not None:
-        pl.savefig(fileout)
-
-    return h1,qnull, qemp,
-
-
-def qqplotp(pv,fileout = None, alphalevel = 0.05,legend=None,xlim=None,ylim=None,ycoord=10,plotsize="652x526",title=None,dohist=True, numbins=50, figsize=[5,5], markersize=2):
-     '''
-     Read in p-values from filein and make a qqplot adn histogram.
-     If fileout is provided, saves the qqplot only at present.
-     Searches through p until one is found.   '''       
-     
-     import pylab as pl     
-     pl.ion()     
-     
-     fs=8     
-     h1=qqplot(pv, fileout, alphalevel,legend,xlim,ylim,addlambda=True, figsize=figsize, markersize=markersize)
-     #lambda_gc=estimate_lambda(pv)
-     #pl.legend(["gc="+ '%1.3f' % lambda_gc],loc=2)     
-     pl.title(title,fontsize=fs)
-     
-     wm=pl.get_current_fig_manager()
-     #e.g. "652x526+100+10
-     xcoord=100     
-     #wm.window.wm_geometry(plotsize + "+" + str(xcoord) + "+" + str(ycoord))
-
-     if dohist:
-         h2=pvalhist(pv, numbins=numbins, figsize=figsize)
-         pl.title(title,fontsize=fs)
-         #wm=pl.get_current_fig_manager()
-         width_height=plotsize.split("x")
-         buffer=10
-         xcoord=int(xcoord + float(width_height[0])+buffer)
-         #wm.window.wm_geometry(plotsize + "+" + str(xcoord) + "+" + str(ycoord))
-     else: h2=None
-
-     return h1,h2
-
-def addqqplotinfo(qnull,M,xl='-log10(P) observed',yl='-log10(P) expected',xlim=None,ylim=None,alphalevel=0.05,legendlist=None,fixaxes=False):    
-    distr='log10'
-    pl.plot([0,qnull.max()], [0,qnull.max()],'k')
-    pl.ylabel(xl)
-    pl.xlabel(yl)
-    if xlim is not None:
-        pl.xlim(xlim)
-    if ylim is not None:
-        pl.ylim(ylim)        
-    if alphalevel is not None:
-        if distr == 'log10':
-            betaUp, betaDown, theoreticalPvals = _qqplot_bar(M=M,alphalevel=alphalevel,distr=distr)
-            lower = -sp.log10(theoreticalPvals-betaDown)
-            upper = -sp.log10(theoreticalPvals+betaUp)
-            pl.fill_between(-sp.log10(theoreticalPvals),lower,upper,color="grey",alpha=0.5)
-            #pl.plot(-sp.log10(theoreticalPvals),lower,'g-.')
-            #pl.plot(-sp.log10(theoreticalPvals),upper,'g-.')
-    if legendlist is not None:
-        leg = pl.legend(legendlist, loc=4, numpoints=1)
-        # set the markersize for the legend
-        for lo in leg.legendHandles:
-            lo.set_markersize(10)
-
-    if fixaxes:
-        fix_axes()        
+# def addqqplotinfo(qnull,M,xl='-log10(P) observed',yl='-log10(P) expected',xlim=None,ylim=None,alphalevel=0.05,legendlist=None,fixaxes=False):
+#     distr='log10'
+#     pl.plot([0,qnull.max()], [0,qnull.max()],'k')
+#     pl.ylabel(xl)
+#     pl.xlabel(yl)
+#     if xlim is not None:
+#         pl.xlim(xlim)
+#     if ylim is not None:
+#         pl.ylim(ylim)
+#     if alphalevel is not None:
+#         if distr == 'log10':
+#             betaUp, betaDown, theoreticalPvals = _qqplot_bar(M=M,alphalevel=alphalevel,distr=distr)
+#             lower = -sp.log10(theoreticalPvals-betaDown)
+#             upper = -sp.log10(theoreticalPvals+betaUp)
+#             pl.fill_between(-sp.log10(theoreticalPvals),lower,upper,color="grey",alpha=0.5)
+#             #pl.plot(-sp.log10(theoreticalPvals),lower,'g-.')
+#             #pl.plot(-sp.log10(theoreticalPvals),upper,'g-.')
+#     if legendlist is not None:
+#         leg = pl.legend(legendlist, loc=4, numpoints=1)
+#         # set the markersize for the legend
+#         for lo in leg.legendHandles:
+#             lo.set_markersize(10)
+#
+#     if fixaxes:
+#         fix_axes()
 
 def _qqplot_bar(M=1000000, alphalevel = 0.05,distr = 'log10'):
     '''
@@ -211,13 +211,13 @@ def _qqplot_bar(M=1000000, alphalevel = 0.05,distr = 'log10'):
 
 
 
-def fix_axes(buffer=0.1):
-    '''
-    Makes x and y max the same, and the lower limits 0.
-    '''    
-    maxlim=max(pl.xlim()[1],pl.ylim()[1])    
-    pl.xlim([0-buffer,maxlim+buffer])
-    pl.ylim([0-buffer,maxlim+buffer])
+# def fix_axes(buffer=0.1):
+#     '''
+#     Makes x and y max the same, and the lower limits 0.
+#     '''
+#     maxlim=max(pl.xlim()[1],pl.ylim()[1])
+#     pl.xlim([0-buffer,maxlim+buffer])
+#     pl.ylim([0-buffer,maxlim+buffer])
 
 def estimate_lambda(pv):
     '''
@@ -233,13 +233,13 @@ def estimate_lambda(pv):
     return L
 
      
-def pvalhist(pv,numbins=50,linewidth=3.0,linespec='--r', figsize=[5,5]):    
-    '''
-    Plots normalized histogram, plus theoretical null-only line.
-    '''    
-    h2=pl.figure(figsize=figsize)      
-    [nn,bins,patches]=pl.hist(pv,numbins,normed=True)    
-    pl.plot([0, 1],[1,1],linespec,linewidth=linewidth)
+# def pvalhist(pv,numbins=50,linewidth=3.0,linespec='--r', figsize=[5,5]):
+#     '''
+#     Plots normalized histogram, plus theoretical null-only line.
+#     '''
+#     h2=pl.figure(figsize=figsize)
+#     [nn,bins,patches]=pl.hist(pv,numbins,normed=True)
+#     pl.plot([0, 1],[1,1],linespec,linewidth=linewidth)
 
 
 
@@ -582,100 +582,100 @@ def get_data(data, y_names, organism="human", target_gene=None):
     return features, outputs
 
 
-def plot_metrics(metrics, truth_and_predictions, target_genes, run_label, color=None, filename_prefix=None, learn_options=None):
-
-    if learn_options["metric"] == 'AUC':
-        best = truth_and_predictions[0]#[np.argmax(cv_scores)]
-        plt.figure('ROC per gene')
-        plt.figure('global ROC')
-        plt.figure('AUC ROC per gene')
-
-        all_truth = np.array([])
-        all_predictions = np.array([])
-        AUCs = []
-        AUCs_labels = []
-        for i, gene in enumerate(target_genes):
-            if len(best[1][gene])==0:
-                continue
-            plt.figure('ROC per gene')
-            plt.subplot(331+i)
-            fpr, tpr, _ = sklearn.metrics.roc_curve(best[0][gene], best[1][gene])
-            np.savetxt('../results/%s_ROC.txt' % gene, np.hstack((fpr[:, None], tpr[:, None])))
-
-            roc_auc = sklearn.metrics.auc(fpr, tpr)
-            AUCs.append(roc_auc)
-            AUCs_labels.append(gene)
-            plt.plot(fpr, tpr, label=run_label)
-            plt.title(gene)
-            h1 = plt.figure('global ROC')
-            plt.plot(fpr, tpr, color=color, alpha=.2, linewidth=2.)
-
-            all_truth = np.hstack((all_truth, best[0][gene]))
-            all_predictions = np.hstack((all_predictions, best[1][gene]))
-
-        plt.legend(loc=0)
-
-        plt.figure('AUC ROC per gene')
-        ax = plt.subplot(111)
-        rect = ax.bar(list(range(len(AUCs))), AUCs, width=0.8)
-        autolabel(ax,rect)
-
-        ax.set_ylim((0.5, 1.0))
-        ax.set_ylabel('AUC ROC')
-        ax.set_xticks(np.array(list(range(len(AUCs)))) + 0.8 / 2)
-        ax.set_xticklabels([t for t in AUCs_labels])
-
-        fpr, tpr, _ = sklearn.metrics.roc_curve(all_truth, all_predictions)
-        roc_auc = sklearn.metrics.auc(fpr, tpr)
-        #print run_label, roc_auc
-        plt.figure('global ROC')
-        plt.plot(fpr, tpr, label=run_label + " AUC=%.2f" % roc_auc, color=color, linewidth=2.)
-        plt.legend(loc=0)
-        plt.xlabel('False Positive Rate')
-        plt.ylabel('True Positive Rate')
-        #np.savetxt('../results/global_ROC.txt', np.hstack((fpr[:, None], tpr[:, None])))
-        #np.savetxt('../results/AUCs.txt', np.hstack((np.array([t for t in target_genes])[:, None], np.array(AUCs)[:, None])), fmt='%s')
-
-        if filename_prefix != None:
-            plt.figure('global ROC')
-            plt.savefig(filename_prefix+'globalROC.png')
-
-            plt.figure('ROC per gene')
-            plt.savefig(filename_prefix+'ROC_per_gene.png')
-
-            plt.figure('AUC ROC per gene')
-            plt.savefig(filename_prefix+'AUCROC_barplot.png')
-        return roc_auc
-    else:
-        plt.figure('NDCG per gene')
-        ax = plt.subplot(111)
-        rect = ax.bar(list(range(len(metrics))), metrics, width=0.8)
-        autolabel(ax,rect)
-        ax.set_ylim((0.0, 1.2))
-        ax.set_ylabel('NDCG')
-        ax.set_xticks(np.array(list(range(len(metrics)))) + 0.8 / 2)
-        ax.set_xticklabels([t for t in target_genes])
-
-        truth, predictions = truth_and_predictions[0]
-        all_truth = np.array([])
-        all_predictions = np.array([])
-
-        for i, gene in enumerate(target_genes):
-            if len(predictions[gene])==0:
-                continue
-
-            all_truth = np.hstack((all_truth, truth[gene]))
-            all_predictions = np.hstack((all_predictions, predictions[gene]))
-
-        sorted = all_predictions[np.argsort(all_truth).flatten()[::-1]]
-        sortedgt = np.sort(all_truth).flatten()[::-1]
-        NDCG_total = ranking_metrics.ndcg_at_k_custom_n(sorted, learn_options["NDGC_k"], sortedgt)
-
-        if filename_prefix != None:
-            plt.figure('NDCG per gene')
-            plt.savefig(filename_prefix+'NDCG_barplot.png')
-
-        return NDCG_total
+# def plot_metrics(metrics, truth_and_predictions, target_genes, run_label, color=None, filename_prefix=None, learn_options=None):
+#
+#     if learn_options["metric"] == 'AUC':
+#         best = truth_and_predictions[0]#[np.argmax(cv_scores)]
+#         plt.figure('ROC per gene')
+#         plt.figure('global ROC')
+#         plt.figure('AUC ROC per gene')
+#
+#         all_truth = np.array([])
+#         all_predictions = np.array([])
+#         AUCs = []
+#         AUCs_labels = []
+#         for i, gene in enumerate(target_genes):
+#             if len(best[1][gene])==0:
+#                 continue
+#             plt.figure('ROC per gene')
+#             plt.subplot(331+i)
+#             fpr, tpr, _ = sklearn.metrics.roc_curve(best[0][gene], best[1][gene])
+#             np.savetxt('../results/%s_ROC.txt' % gene, np.hstack((fpr[:, None], tpr[:, None])))
+#
+#             roc_auc = sklearn.metrics.auc(fpr, tpr)
+#             AUCs.append(roc_auc)
+#             AUCs_labels.append(gene)
+#             plt.plot(fpr, tpr, label=run_label)
+#             plt.title(gene)
+#             h1 = plt.figure('global ROC')
+#             plt.plot(fpr, tpr, color=color, alpha=.2, linewidth=2.)
+#
+#             all_truth = np.hstack((all_truth, best[0][gene]))
+#             all_predictions = np.hstack((all_predictions, best[1][gene]))
+#
+#         plt.legend(loc=0)
+#
+#         plt.figure('AUC ROC per gene')
+#         ax = plt.subplot(111)
+#         rect = ax.bar(list(range(len(AUCs))), AUCs, width=0.8)
+#         autolabel(ax,rect)
+#
+#         ax.set_ylim((0.5, 1.0))
+#         ax.set_ylabel('AUC ROC')
+#         ax.set_xticks(np.array(list(range(len(AUCs)))) + 0.8 / 2)
+#         ax.set_xticklabels([t for t in AUCs_labels])
+#
+#         fpr, tpr, _ = sklearn.metrics.roc_curve(all_truth, all_predictions)
+#         roc_auc = sklearn.metrics.auc(fpr, tpr)
+#         #print run_label, roc_auc
+#         plt.figure('global ROC')
+#         plt.plot(fpr, tpr, label=run_label + " AUC=%.2f" % roc_auc, color=color, linewidth=2.)
+#         plt.legend(loc=0)
+#         plt.xlabel('False Positive Rate')
+#         plt.ylabel('True Positive Rate')
+#         #np.savetxt('../results/global_ROC.txt', np.hstack((fpr[:, None], tpr[:, None])))
+#         #np.savetxt('../results/AUCs.txt', np.hstack((np.array([t for t in target_genes])[:, None], np.array(AUCs)[:, None])), fmt='%s')
+#
+#         if filename_prefix != None:
+#             plt.figure('global ROC')
+#             plt.savefig(filename_prefix+'globalROC.png')
+#
+#             plt.figure('ROC per gene')
+#             plt.savefig(filename_prefix+'ROC_per_gene.png')
+#
+#             plt.figure('AUC ROC per gene')
+#             plt.savefig(filename_prefix+'AUCROC_barplot.png')
+#         return roc_auc
+#     else:
+#         plt.figure('NDCG per gene')
+#         ax = plt.subplot(111)
+#         rect = ax.bar(list(range(len(metrics))), metrics, width=0.8)
+#         autolabel(ax,rect)
+#         ax.set_ylim((0.0, 1.2))
+#         ax.set_ylabel('NDCG')
+#         ax.set_xticks(np.array(list(range(len(metrics)))) + 0.8 / 2)
+#         ax.set_xticklabels([t for t in target_genes])
+#
+#         truth, predictions = truth_and_predictions[0]
+#         all_truth = np.array([])
+#         all_predictions = np.array([])
+#
+#         for i, gene in enumerate(target_genes):
+#             if len(predictions[gene])==0:
+#                 continue
+#
+#             all_truth = np.hstack((all_truth, truth[gene]))
+#             all_predictions = np.hstack((all_predictions, predictions[gene]))
+#
+#         sorted = all_predictions[np.argsort(all_truth).flatten()[::-1]]
+#         sortedgt = np.sort(all_truth).flatten()[::-1]
+#         NDCG_total = ranking_metrics.ndcg_at_k_custom_n(sorted, learn_options["NDGC_k"], sortedgt)
+#
+#         if filename_prefix != None:
+#             plt.figure('NDCG per gene')
+#             plt.savefig(filename_prefix+'NDCG_barplot.png')
+#
+#         return NDCG_total
 
 def autolabel(ax, rects, strfrm='%.2f'):
     '''
@@ -843,16 +843,16 @@ def feature_importances(results, fontsize=16, figsize=(14, 8)):
 
         ind = np.arange(0, len(boxplot_labels)*2, 2)# farange(len(boxplot_labels))
         width = 1.5
-        plt.figure(figsize=figsize)
-        plt.bar(ind, boxplot_means, width, color='#186499', yerr=boxplot_std, ecolor='k', edgecolor='none')
+        # plt.figure(figsize=figsize)
+        # plt.bar(ind, boxplot_means, width, color='#186499', yerr=boxplot_std, ecolor='k', edgecolor='none')
 
-        ax = plt.gca()
-        ax.set_ylabel('Average Gini importances', fontsize=fontsize)
-        ax.set_xticks(ind+width/2.0 + 0.1)
+        # ax = plt.gca()
+        # ax.set_ylabel('Average Gini importances', fontsize=fontsize)
+        # ax.set_xticks(ind+width/2.0 + 0.1)
 
-        ax.set_xticklabels(descriptive_labels[sorted_boxplot], rotation=90, fontsize=fontsize)
-        plt.ylim([0.0, 0.5])
-        plt.subplots_adjust(top = 0.97, bottom = 0.4)
+        # ax.set_xticklabels(descriptive_labels[sorted_boxplot], rotation=90, fontsize=fontsize)
+        # plt.ylim([0.0, 0.5])
+        # plt.subplots_adjust(top = 0.97, bottom = 0.4)
 
         # plt.boxplot(boxplot_arrays[:, sorted_boxplot])
         # plt.ylabel('Average Gini')
@@ -964,92 +964,93 @@ def get_all_metrics(results, learn_options_set=None, test_metrics=['spearmanr'],
         return all_results, genes
 
 def plot_all_metrics(metrics, gene_names, all_learn_options, save, plots=None, bottom=0.19):
-    num_methods = len(list(metrics.keys()))
-    metrics_names = list(metrics[list(metrics.keys())[0]].keys())
-    num_genes = len(gene_names)
-    width = 0.9/num_methods
-    ind = np.arange(num_genes)
-
-    if save==True:
-        first_key = list(all_learn_options.keys())[0]
-        #basefile = r"..\results\V%s_trmetric%s_%s" % (all_learn_options[first_key]["V"], all_learn_options[first_key]["training_metric"], datestamp())
-        basefile = r"..\results\%s" % (first_key)
-
-        d = os.path.dirname(basefile)
-        if not os.path.exists(d):
-            os.makedirs(d)
-        with open(basefile + ".plot.pickle", "wb") as f:
-            pickle.dump([metrics, all_learn_options, gene_names], f)
-
-    for metric in metrics_names:
-        if 'global' not in metric:
-            plt.figure(metric, figsize=(20, 8))
-        elif plots == None or 'gene level' in plots:
-            plt.figure(metric, figsize=(12, 12))
-
-    boxplot_labels = []
-    boxplot_arrays = {}
-    boxplot_median = {}
-
-    for i, method in enumerate(metrics.keys()):
-        boxplot_labels.append(method)
-        for metric in list(metrics[method].keys()):
-
-            if 'global' in metric:
-                plt.figure(metric)
-                plt.bar([i], metrics[method][metric], 0.9, color=plt.cm.Paired(1.*i/len(list(metrics.keys()))), label=method)
-            else:
-                if plots == None or 'gene level' in plots:
-                    plt.figure(metric)
-                    plt.bar(ind+(i*width), metrics[method][metric], width, color=plt.cm.Paired(1.*i/len(list(metrics.keys()))), label=method)
-
-                median_metric = np.median(metrics[method][metric])
-                print(method, metric, median_metric)
-                assert not np.isnan(median_metric), "found nan for %s, %s" % (method, metric)
-                if metric not in list(boxplot_arrays.keys()):
-                    boxplot_arrays[metric] = np.array(metrics[method][metric])[:, None]
-                    boxplot_median[metric] = [np.median(np.array(metrics[method][metric]))]
-                else:
-                    boxplot_arrays[metric] = np.concatenate((boxplot_arrays[metric], np.array(metrics[method][metric])[:, None]), axis=1)
-                    boxplot_median[metric].append(np.median(np.array(metrics[method][metric])))
-
-
-    for metric in metrics_names:
-        if plots == None or 'gene level' in plots:
-            ax = plt.figure(metric)
-            leg = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-            # leg.draggable(state=True, use_blit=True)
-            plt.ylabel(metric)
-
-            if 'global' in metric:
-                plt.xticks(list(range(len(list(metrics.keys())))), list(metrics.keys()), rotation=70)
-                plt.grid(True, which='both')
-                plt.subplots_adjust(left = 0.05, right = 0.8)
-            else:
-                plt.xticks(ind+width, gene_names)
-                plt.grid(True, which='both')
-                plt.subplots_adjust(left = 0.05, right = 0.8)
-        if save == True:
-            plt.xticks(ind+0.5, gene_names)
-            if metric=='AUC':
-                plt.ylim([0.5, 1.0])
-            plt.savefig(basefile + "_" + metric + "_bar" + ".png")
-
-        if (plots == None or "boxplots" in plots) and 'global' not in metric:
-            plt.figure('Boxplot %s' % metric)
-
-            sorted_boxplot = np.argsort(boxplot_median[metric])[::-1]
-
-            plt.boxplot(boxplot_arrays[metric][:, sorted_boxplot])
-            plt.ylabel(metric)
-            plt.xticks(list(range(1, num_methods+1)), np.array(boxplot_labels)[sorted_boxplot], rotation=70)
-            plt.subplots_adjust(top = 0.97, bottom = bottom)
-
-            if metric == 'RMSE':
-                plt.ylim((1.0, 2.0))
-
-        if save == True:
-            plt.savefig(basefile + "_" + metric + ".png")
+    pass
+    # num_methods = len(list(metrics.keys()))
+    # metrics_names = list(metrics[list(metrics.keys())[0]].keys())
+    # num_genes = len(gene_names)
+    # width = 0.9/num_methods
+    # ind = np.arange(num_genes)
+    #
+    # if save==True:
+    #     first_key = list(all_learn_options.keys())[0]
+    #     #basefile = r"..\results\V%s_trmetric%s_%s" % (all_learn_options[first_key]["V"], all_learn_options[first_key]["training_metric"], datestamp())
+    #     basefile = r"..\results\%s" % (first_key)
+    #
+    #     d = os.path.dirname(basefile)
+    #     if not os.path.exists(d):
+    #         os.makedirs(d)
+    #     with open(basefile + ".plot.pickle", "wb") as f:
+    #         pickle.dump([metrics, all_learn_options, gene_names], f)
+    #
+    # for metric in metrics_names:
+    #     if 'global' not in metric:
+    #         plt.figure(metric, figsize=(20, 8))
+    #     elif plots == None or 'gene level' in plots:
+    #         plt.figure(metric, figsize=(12, 12))
+    #
+    # boxplot_labels = []
+    # boxplot_arrays = {}
+    # boxplot_median = {}
+    #
+    # for i, method in enumerate(metrics.keys()):
+    #     boxplot_labels.append(method)
+    #     for metric in list(metrics[method].keys()):
+    #
+    #         if 'global' in metric:
+    #             plt.figure(metric)
+    #             plt.bar([i], metrics[method][metric], 0.9, color=plt.cm.Paired(1.*i/len(list(metrics.keys()))), label=method)
+    #         else:
+    #             if plots == None or 'gene level' in plots:
+    #                 plt.figure(metric)
+    #                 plt.bar(ind+(i*width), metrics[method][metric], width, color=plt.cm.Paired(1.*i/len(list(metrics.keys()))), label=method)
+    #
+    #             median_metric = np.median(metrics[method][metric])
+    #             print(method, metric, median_metric)
+    #             assert not np.isnan(median_metric), "found nan for %s, %s" % (method, metric)
+    #             if metric not in list(boxplot_arrays.keys()):
+    #                 boxplot_arrays[metric] = np.array(metrics[method][metric])[:, None]
+    #                 boxplot_median[metric] = [np.median(np.array(metrics[method][metric]))]
+    #             else:
+    #                 boxplot_arrays[metric] = np.concatenate((boxplot_arrays[metric], np.array(metrics[method][metric])[:, None]), axis=1)
+    #                 boxplot_median[metric].append(np.median(np.array(metrics[method][metric])))
+    #
+    #
+    # for metric in metrics_names:
+    #     if plots == None or 'gene level' in plots:
+    #         ax = plt.figure(metric)
+    #         leg = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    #         # leg.draggable(state=True, use_blit=True)
+    #         plt.ylabel(metric)
+    #
+    #         if 'global' in metric:
+    #             plt.xticks(list(range(len(list(metrics.keys())))), list(metrics.keys()), rotation=70)
+    #             plt.grid(True, which='both')
+    #             plt.subplots_adjust(left = 0.05, right = 0.8)
+    #         else:
+    #             plt.xticks(ind+width, gene_names)
+    #             plt.grid(True, which='both')
+    #             plt.subplots_adjust(left = 0.05, right = 0.8)
+    #     if save == True:
+    #         plt.xticks(ind+0.5, gene_names)
+    #         if metric=='AUC':
+    #             plt.ylim([0.5, 1.0])
+    #         plt.savefig(basefile + "_" + metric + "_bar" + ".png")
+    #
+    #     if (plots == None or "boxplots" in plots) and 'global' not in metric:
+    #         plt.figure('Boxplot %s' % metric)
+    #
+    #         sorted_boxplot = np.argsort(boxplot_median[metric])[::-1]
+    #
+    #         plt.boxplot(boxplot_arrays[metric][:, sorted_boxplot])
+    #         plt.ylabel(metric)
+    #         plt.xticks(list(range(1, num_methods+1)), np.array(boxplot_labels)[sorted_boxplot], rotation=70)
+    #         plt.subplots_adjust(top = 0.97, bottom = bottom)
+    #
+    #         if metric == 'RMSE':
+    #             plt.ylim((1.0, 2.0))
+    #
+    #     if save == True:
+    #         plt.savefig(basefile + "_" + metric + ".png")
 
 def load_results(directory, all_results, all_learn_options, model_filter=None, append_to_key=None):
     '''
@@ -1210,92 +1211,92 @@ def ensemble_cluster_results(directory=r'\\fusi1\crispr2\analysis\cluster\result
 
     return all_results, all_learn_options
 
-def plot_old_vs_new_feat(results, models, fontsize=20, filename=None, print_output=False):
+# def plot_old_vs_new_feat(results, models, fontsize=20, filename=None, print_output=False):
+#
+#     model_names = []
+#     for model in models:
+#         if 'doench' in model:
+#             model_names.append('SVM + LogReg')
+#         elif 'AB_' in model:
+#             model_names.append('AdaBoost DT')
+#         else:
+#             model_names.append(model)
+#
+#     base_spearman_means = []
+#     base_AUC_means = []
+#     feat_spearman_means = []
+#     feat_AUC_means = []
+#     base_spearman_std = []
+#     feat_spearman_std = []
+#     base_AUC_se = []
+#     feat_AUC_se = []
+#
+#     for model in models:
+#         metrics = get_all_metrics({model: results[model]}, test_metrics=['spearmanr', 'AUC'])[0][model]
+#         metrics_feat = get_all_metrics({model + '_feat': results[model + "_feat"]}, test_metrics=['spearmanr', 'AUC'])[0][model + '_feat']
+#
+#         base_spearman_means.append(np.mean(metrics['spearmanr']))
+#         base_spearman_std.append(np.std(metrics['spearmanr']))
+#         base_AUC_means.append(np.mean(metrics['AUC']))
+#         base_AUC_se.append(np.std(metrics['AUC']))
+#
+#         feat_spearman_means.append(np.mean(metrics_feat['spearmanr']))
+#         feat_spearman_std.append(np.std(metrics_feat['spearmanr']))
+#         feat_AUC_means.append(np.mean(metrics_feat['AUC']))
+#         feat_AUC_se.append(np.std(metrics_feat['AUC']))
+#
+#
+#     print("old features")
+#     print("mean: " + str(base_spearman_means))
+#     print("std: " + str(base_spearman_std))
+#
+#     print("old + new features")
+#     print("mean: " + str(feat_spearman_means))
+#     print("std: " + str(feat_spearman_std))
+#
+#     plt.figure()
+#     ind = np.arange(len(models))
+#     width = 0.4
+#     plt.bar(ind, base_spearman_means, width, color='#D14B5D', yerr=base_spearman_std, ecolor='k', edgecolor='none', label='Old features')
+#     plt.bar(ind+width, feat_spearman_means, width, color='#852230', yerr=feat_spearman_std, ecolor='k', edgecolor='none', label='Old + new features')
+#     ax = plt.gca()
+#     ax.set_ylabel('Spearman r', fontsize=fontsize)
+#     ax.set_xticks(ind+width)
+#     ax.set_xticklabels(model_names, fontsize=fontsize)
+#     plt.legend(loc=0, fontsize=fontsize)
+#     plt.yticks(fontsize=fontsize)
+#     plt.ylim((0.0, 0.7))
+#     remove_top_right_on_plot()
+#     if filename is not None:
+#         plt.savefig(filename + '_spearman.pdf')
+#
+#     plt.figure()
+#     ind = np.arange(len(models))
+#     width = 0.4
+#     plt.bar(ind, base_AUC_means, width, color='#D14B5D', yerr=base_AUC_se, ecolor='k', edgecolor='none', label='Old features')
+#     plt.bar(ind+width, feat_AUC_means, width, color='#852230', yerr=feat_AUC_se, ecolor='k', edgecolor='none', label='Old + new features')
+#     ax = plt.gca()
+#     ax.set_ylabel('AUC', fontsize=fontsize)
+#     ax.set_xticks(ind+width)
+#     ax.set_xticklabels(model_names, fontsize=fontsize)
+#     plt.legend(loc=0)
+#     plt.ylim((0.5, 0.85))
+#     plt.legend(loc=0, fontsize=fontsize)
+#     plt.yticks(fontsize=fontsize)
+#     remove_top_right_on_plot()
+#     if filename is not None:
+#         plt.savefig(filename + '_AUC.pdf')
+#
+#     # plt.subplots_adjust(top = 0.97, bottom = 0.4)
 
-    model_names = []
-    for model in models:
-        if 'doench' in model:
-            model_names.append('SVM + LogReg')
-        elif 'AB_' in model:
-            model_names.append('AdaBoost DT')
-        else:
-            model_names.append(model)
 
-    base_spearman_means = []
-    base_AUC_means = []
-    feat_spearman_means = []
-    feat_AUC_means = []
-    base_spearman_std = []
-    feat_spearman_std = []
-    base_AUC_se = []
-    feat_AUC_se = []
-
-    for model in models:
-        metrics = get_all_metrics({model: results[model]}, test_metrics=['spearmanr', 'AUC'])[0][model]
-        metrics_feat = get_all_metrics({model + '_feat': results[model + "_feat"]}, test_metrics=['spearmanr', 'AUC'])[0][model + '_feat']
-
-        base_spearman_means.append(np.mean(metrics['spearmanr']))
-        base_spearman_std.append(np.std(metrics['spearmanr']))
-        base_AUC_means.append(np.mean(metrics['AUC']))
-        base_AUC_se.append(np.std(metrics['AUC']))
-
-        feat_spearman_means.append(np.mean(metrics_feat['spearmanr']))
-        feat_spearman_std.append(np.std(metrics_feat['spearmanr']))
-        feat_AUC_means.append(np.mean(metrics_feat['AUC']))
-        feat_AUC_se.append(np.std(metrics_feat['AUC']))
-
-
-    print("old features")
-    print("mean: " + str(base_spearman_means))
-    print("std: " + str(base_spearman_std))
-
-    print("old + new features")
-    print("mean: " + str(feat_spearman_means))
-    print("std: " + str(feat_spearman_std))
-
-    plt.figure()
-    ind = np.arange(len(models))
-    width = 0.4
-    plt.bar(ind, base_spearman_means, width, color='#D14B5D', yerr=base_spearman_std, ecolor='k', edgecolor='none', label='Old features')
-    plt.bar(ind+width, feat_spearman_means, width, color='#852230', yerr=feat_spearman_std, ecolor='k', edgecolor='none', label='Old + new features')
-    ax = plt.gca()
-    ax.set_ylabel('Spearman r', fontsize=fontsize)
-    ax.set_xticks(ind+width)
-    ax.set_xticklabels(model_names, fontsize=fontsize)
-    plt.legend(loc=0, fontsize=fontsize)
-    plt.yticks(fontsize=fontsize)
-    plt.ylim((0.0, 0.7))
-    remove_top_right_on_plot()
-    if filename is not None:
-        plt.savefig(filename + '_spearman.pdf')
-
-    plt.figure()
-    ind = np.arange(len(models))
-    width = 0.4
-    plt.bar(ind, base_AUC_means, width, color='#D14B5D', yerr=base_AUC_se, ecolor='k', edgecolor='none', label='Old features')
-    plt.bar(ind+width, feat_AUC_means, width, color='#852230', yerr=feat_AUC_se, ecolor='k', edgecolor='none', label='Old + new features')
-    ax = plt.gca()
-    ax.set_ylabel('AUC', fontsize=fontsize)
-    ax.set_xticks(ind+width)
-    ax.set_xticklabels(model_names, fontsize=fontsize)
-    plt.legend(loc=0)
-    plt.ylim((0.5, 0.85))
-    plt.legend(loc=0, fontsize=fontsize)
-    plt.yticks(fontsize=fontsize)
-    remove_top_right_on_plot()
-    if filename is not None:
-        plt.savefig(filename + '_AUC.pdf')
-
-    # plt.subplots_adjust(top = 0.97, bottom = 0.4)
-
-
-def remove_top_right_on_plot(ax=None):
-    if ax==None:
-        ax = plt.gca()
-    ax.xaxis.set_ticks_position('bottom')
-    ax.yaxis.set_ticks_position('left')
-    ax.spines['right'].set_visible(False)
-    ax.spines['top'].set_visible(False)
+# def remove_top_right_on_plot(ax=None):
+#     if ax==None:
+#         # ax = plt.gca()
+#     ax.xaxis.set_ticks_position('bottom')
+#     ax.yaxis.set_ticks_position('left')
+#     ax.spines['right'].set_visible(False)
+#     ax.spines['top'].set_visible(False)
 
 
 if __name__ == '__main__':
