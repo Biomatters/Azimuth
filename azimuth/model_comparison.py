@@ -556,7 +556,7 @@ def save_final_model_V3(filename=None, include_position=True, learn_options=None
     model = list(results.values())[0][3][0]
 
     with open(filename, 'wb') as f:
-        pickle.dump((model, learn_options), f, -1)
+        pickle.dump((model, learn_options), f, protocol=4)
 
     return model
 
