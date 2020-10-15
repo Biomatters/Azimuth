@@ -2,8 +2,8 @@
 from setuptools import setup
 
 
-setup(name='Azimuth',
-      version='0.1.2',
+setup(name='Biomatters-Azimuth',
+      version='0.1',
       author='Nicolo Fusi and Jennifer Listgarten',
       author_email="fusi@microsoft.com, jennl@microsoft.com",
       description=("Machine Learning-Based Predictive Modelling of CRISPR/Cas9 guide efficiency"),
