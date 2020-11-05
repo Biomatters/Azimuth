@@ -1,3 +1,5 @@
+import pkg_resources
+
 import azimuth
 import azimuth.model_comparison
 import numpy as np
@@ -6,6 +8,7 @@ import pandas
 import os
 dirname, filename = os.path.split(os.path.abspath(__file__))
 
+
 class SavedModelTests(unittest.TestCase):
     """
     This unit test checks that the predictions for 1000 guides match the predictions we expected in Nov 2016.
@@ -13,7 +16,8 @@ class SavedModelTests(unittest.TestCase):
     """
 
     def test_predictions_nopos(self):
-        df = pandas.read_csv(os.path.join(dirname, '1000guides.csv'), index_col=0)
+        with pkg_resources.resource_stream('azimuth', os.path.join("tests", "1000guides.csv")) as f:
+            df = pandas.read_csv(f, index_col=0)
         predictions = azimuth.model_comparison.predict(np.array(df['guide'].values), None, None)
 
         num = 0
@@ -27,7 +31,8 @@ class SavedModelTests(unittest.TestCase):
         self.assertTrue(np.allclose(predictions, df['truth nopos'].values, atol=1e-3))
 
     def test_predictions_pos(self):
-        df = pandas.read_csv(os.path.join(dirname, '1000guides.csv'), index_col=0)
+        with pkg_resources.resource_stream('azimuth', os.path.join("tests", "1000guides.csv")) as f:
+            df = pandas.read_csv(f, index_col=0)
         predictions = azimuth.model_comparison.predict(np.array(df['guide'].values), np.array(df['AA cut'].values), np.array(df['Percent peptide'].values))
 
         num = 0
