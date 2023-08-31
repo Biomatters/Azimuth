@@ -9,7 +9,7 @@ setup(name='Biomatters-Azimuth',
       description=("Machine Learning-Based Predictive Modelling of CRISPR/Cas9 guide efficiency"),
       packages=["azimuth", "azimuth.features", "azimuth.models", "azimuth.tests"],
       package_data={'azimuth': ['saved_models/*.*', 'data/*.*', 'tests/*.*']},
-      install_requires=['scipy', 'numpy>=1.19.3', 'nose', 'scikit-learn>=0.24.1', 'pandas', 'biopython<=1.79', 'xlrd'],
+      install_requires=['scipy', 'numpy>=1.19.3', 'nose', 'scikit-learn>=0.24.1', 'pandas', 'biopython>=1.79', 'xlrd'],
       license="BSD",
       # ext_modules=cythonize("ssk_cython.pyx"),
       )
